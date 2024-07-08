@@ -1,3 +1,5 @@
+import { PageInfo } from "./pageInfo";
+
 export interface Product {
   uid: string;
   name: string;
@@ -15,6 +17,8 @@ export interface Product {
 export interface ProductsData {
   products: {
     items: Product[];
+    page_info: PageInfo;
+    total_count: number;
   };
 }
 
