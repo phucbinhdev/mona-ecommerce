@@ -12,6 +12,7 @@ export interface Product {
   };
   image: { url: string };
   rating_summary: number;
+  sku: string;
 }
 
 export interface ProductsData {
