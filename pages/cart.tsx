@@ -1,41 +1,8 @@
 import CartList from "@/components/CartList";
-import { gql, useQuery } from "@apollo/client";
+import { GET_CART } from "@/mutations/cart";
+import { useQuery } from "@apollo/client";
 import { Button } from "antd";
 import React, { useEffect, useState } from "react";
-
-const GET_CART = gql`
-  query getCart($cart_id: String!) {
-    cart(cart_id: $cart_id) {
-      id
-      is_virtual
-      total_quantity
-      prices {
-        grand_total {
-          value
-          currency
-        }
-      }
-      items {
-        uid
-        quantity
-        product {
-          name
-          image {
-            url
-          }
-          price_range {
-            maximum_price {
-              final_price {
-                value
-                currency
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 const CartPage: React.FC = () => {
   const [cartId, setCartId] = useState<string | null>(null);
@@ -76,7 +43,12 @@ const CartPage: React.FC = () => {
             <h3 className="font-bold text-xl mb-5">Tạm tính</h3>
             {cart.items.map((item: any) => (
               <div className="flex justify-between mb-2">
-                <span>{item.product.name}</span>
+                <div className="flex flex-col">
+                  <span>{item.product.name}</span>
+                  <span className="text-gray-900 text-sm">
+                    x{item.quantity}
+                  </span>
+                </div>
                 <b>
                   {item.product.price_range.maximum_price.final_price.value}₫
                 </b>
