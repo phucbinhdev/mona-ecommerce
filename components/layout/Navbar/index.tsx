@@ -11,7 +11,7 @@ const menus = [
 
 const Navbar = () => {
   return (
-    <div className="bg-white fixed top-0 left-0 w-full shadow-2xl">
+    <div className="bg-white fixed top-0 left-0 w-full shadow-2xl z-50">
       <div className="container mx-auto py-6 bg-white flex">
         <div className="flex gap-10">
           {menus.map((item, index) => (

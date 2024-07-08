@@ -92,9 +92,11 @@ const ProductList = () => {
   const { loading, error, data } = useQuery<ProductsData, ProductsVars>(
     GET_PRODUCTS,
     {
-      variables: { search: "", pageSize: 10, currentPage: 1 },
+      variables: { search: "", pageSize: 20, currentPage: 1 },
     }
   );
+
+  console.log("GET_PRODUCTS", data);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
