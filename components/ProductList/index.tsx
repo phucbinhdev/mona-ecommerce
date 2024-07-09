@@ -9,7 +9,7 @@ import ProductCard from "./components/ProductCard";
 const ProductList = () => {
   const [pageLoading, setPageLoading] = useState(false);
   const router = useRouter();
-  const { search } = router.query;
+  const { search, page } = router.query;
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -20,34 +20,27 @@ const ProductList = () => {
     variables: {
       search: (search as string) || "",
       pageSize: 20,
-      currentPage: 1,
+      currentPage: Number(page) || 1,
     },
   });
 
   useEffect(() => {
     if (search) {
-      refetch({ search: search as string, currentPage: 1 });
+      refetch({ search: search as string, currentPage: Number(page) || 1 });
     }
-  }, [search, refetch]);
+  }, [search, page, refetch]);
 
   useEffect(() => {
     refetch();
   }, []);
 
   const handlePageChange = async (page: number) => {
-    try {
-      setPageLoading(true);
-      setCurrentPage(page);
-      await fetchMore({
-        variables: { currentPage: page },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return fetchMoreResult;
-        },
-      });
-    } finally {
-      setPageLoading(false);
-    }
+    const { ...otherQueries } = router.query;
+    router.push({
+      pathname: "/",
+      query: { ...otherQueries, page },
+    });
+    setCurrentPage(page);
   };
 
   if (error) return <p>Error: {error.message}</p>;

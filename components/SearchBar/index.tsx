@@ -47,7 +47,6 @@ export const SearchBar = () => {
             viewBox="0 0 20 20"
           >
             <path
-              // className="group-hover:stroke-white"
               stroke="black"
               strokeLinecap="round"
               strokeLinejoin="round"
