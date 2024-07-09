@@ -102,7 +102,10 @@ const CartPage: React.FC = () => {
                     <Spin spinning={loading || cartLoading}>
                       <div className="divide-y divide-dashed max-h-[500px] overflow-auto">
                         {data.cart.items.map((item: any) => (
-                          <div className="flex justify-between pb-2 pt-2">
+                          <div
+                            className="flex justify-between pb-2 pt-2"
+                            key={item.uid}
+                          >
                             <div className="flex flex-col">
                               <span>{item.product.name}</span>
                               <span className="text-gray-900 text-sm">

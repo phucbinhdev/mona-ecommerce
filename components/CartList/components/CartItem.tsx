@@ -2,6 +2,7 @@ import { REMOVE_CART_ITEM, UPDATE_CART_ITEM_QUANTITY } from "@/graphql/cart";
 import { debounce } from "@/utils/debounce";
 import { useMutation } from "@apollo/client";
 import { Popconfirm, Spin } from "antd";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
 const CartItem = ({
@@ -83,9 +84,11 @@ const CartItem = ({
       >
         <div className="flex">
           <div>
-            <img
+            <Image
+              height={80}
+              width={80}
               src={item?.product?.image?.url}
-              alt={item.product.name}
+              alt={item?.product?.name}
               className="w-20 h-20 object-cover mr-5 rounded-lg border aspect-square"
             />
           </div>
@@ -145,9 +148,12 @@ const CartItem = ({
                 cancelButtonProps={{ size: "middle" }}
               >
                 <div className="bg-red-100 cursor-pointer size-8 flex items-center justify-center rounded-md text-white select-none ml-auto">
-                  <img
+                  <Image
+                    width={16}
+                    height={16}
                     src="/images/icons/trash-sharp.svg"
-                    className="size-4 "
+                    className="size-4"
+                    alt={""}
                   />
                 </div>
               </Popconfirm>
