@@ -46,11 +46,11 @@ const Navbar = () => {
         </div>
         <Link href={"/"} className="absolute left-1/2 -translate-x-1/2">
           <Image
-            src="/vercel.svg"
-            alt="Vercel Logo"
+            src="/logo.svg"
+            alt="Logo"
             className="dark:invert"
-            width={100}
-            height={24}
+            width={60}
+            height={20}
             priority
           />
         </Link>

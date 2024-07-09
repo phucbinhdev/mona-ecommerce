@@ -1,20 +1,31 @@
-import { REMOVE_CART_ITEM, UPDATE_CART_ITEM_QUANTITY } from "@/mutations/cart";
+import { REMOVE_CART_ITEM, UPDATE_CART_ITEM_QUANTITY } from "@/graphql/cart";
 import { debounce } from "@/utils/debounce";
 import { useMutation } from "@apollo/client";
 import { Popconfirm, Spin } from "antd";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-const CartItem = ({ item }: any) => {
+const CartItem = ({
+  item,
+  onChange,
+}: {
+  item: any;
+  onChange: (loading: boolean) => void;
+}) => {
   const [removeCartItem] = useMutation(REMOVE_CART_ITEM);
   const [updateCartItemQuantity] = useMutation(UPDATE_CART_ITEM_QUANTITY);
   const [quantity, setQuantity] = useState<number>(item.quantity);
   const [loading, setLoading] = useState(false);
 
-  const handleRemoveItem = (itemUid: string) => {
+  useEffect(() => {
+    setQuantity(item.quantity);
+  }, [item.quantity]);
+
+  const handleRemoveItem = async (itemUid: string) => {
     setLoading(true);
     const cartId = localStorage.getItem("cartId");
     if (cartId) {
-      removeCartItem({
+      onChange(true);
+      await removeCartItem({
         variables: {
           removeItemFromCartInput: {
             cart_id: cartId,
@@ -22,15 +33,21 @@ const CartItem = ({ item }: any) => {
           },
         },
         refetchQueries: ["getCart"],
-        onError: () => setLoading(false),
+        awaitRefetchQueries: true,
+        onError: () => {
+          setLoading(false);
+          onChange(false);
+        },
+        onCompleted: () => onChange(false),
       });
     }
   };
 
-  const handleUpdateQuantity = (itemUid: string, quantity: number) => {
+  const handleUpdateQuantity = async (itemUid: string, quantity: number) => {
     const cartId = localStorage.getItem("cartId");
     if (cartId && quantity > 0) {
-      updateCartItemQuantity({
+      onChange(true);
+      await updateCartItemQuantity({
         variables: {
           input: {
             cart_id: cartId,
@@ -43,6 +60,12 @@ const CartItem = ({ item }: any) => {
           },
         },
         refetchQueries: ["getCart"],
+        awaitRefetchQueries: true,
+        onError: () => {
+          setLoading(false);
+          onChange(false);
+        },
+        onCompleted: () => onChange(false),
       });
     }
   };

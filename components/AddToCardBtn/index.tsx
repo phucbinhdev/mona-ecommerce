@@ -54,6 +54,7 @@ const AddToCartButton: React.FC<{ product: Product }> = ({ product }) => {
           cartItems,
         },
         refetchQueries: ["getCart"],
+        awaitRefetchQueries: true,
       });
 
       // Handle errors
