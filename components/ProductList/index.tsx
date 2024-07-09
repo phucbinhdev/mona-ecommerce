@@ -7,13 +7,12 @@ import { useEffect, useState } from "react";
 import ProductCard from "./components/ProductCard";
 
 const ProductList = () => {
-  const [pageLoading, setPageLoading] = useState(false);
   const router = useRouter();
   const { search, page } = router.query;
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(Number(page) || 1);
 
-  const { loading, error, data, fetchMore, refetch } = useQuery<
+  const { loading, error, data, refetch } = useQuery<
     ProductsData,
     ProductsVars
   >(GET_PRODUCTS, {
@@ -25,8 +24,13 @@ const ProductList = () => {
   });
 
   useEffect(() => {
-    if (search) {
-      refetch({ search: search as string, currentPage: Number(page) || 1 });
+    if (search || page) {
+      const currentPage = Number(page) || 1;
+      refetch({
+        search: (search as string) || "",
+        currentPage,
+      });
+      setCurrentPage(currentPage);
     }
   }, [search, page, refetch]);
 
@@ -55,11 +59,7 @@ const ProductList = () => {
 
   return (
     <div className="container mx-auto">
-      <Spin
-        spinning={loading || pageLoading}
-        className="min-h-[300px]"
-        size="large"
-      >
+      <Spin spinning={loading} className="min-h-[300px]" size="large">
         <div className="grid grid-cols-5 gap-5">
           {data?.products.items.map((product) => (
             <ProductCard key={product.uid} product={product} />
