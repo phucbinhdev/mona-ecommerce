@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { ReactNode } from "react";
 import Navbar from "./layout/Navbar";
 
@@ -6,10 +7,13 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
+  message.config({
+    maxCount: 2,
+  });
   return (
     <>
       <Navbar />
-      <main className="mt-24">{children}</main>
+      <main className="mt-28">{children}</main>
     </>
   );
 }

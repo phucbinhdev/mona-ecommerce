@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.ant-btn {
+.ant-btn.custom {
   padding: 20px !important;
 }

@@ -1,6 +1,8 @@
+import { useCart } from "@/context/CartContext";
 import { Product } from "@/types/product";
 import { gql, useMutation } from "@apollo/client";
 import { Button, message } from "antd";
+import { useState } from "react";
 
 // Mutation to create an empty cart
 const CREATE_EMPTY_CART = gql`
@@ -28,42 +30,52 @@ const ADD_PRODUCT_TO_CART = gql`
 `;
 
 const AddToCartButton: React.FC<{ product: Product }> = ({ product }) => {
+  const { setTotalQuantity } = useCart();
   const [createEmptyCart] = useMutation(CREATE_EMPTY_CART);
   const [addProductToCart] = useMutation(ADD_PRODUCT_TO_CART);
+  const [loading, setLoading] = useState(false);
 
   const handleAddToCart = async () => {
-    let cartId = localStorage.getItem("cartId");
-    if (!cartId) {
-      // Create an empty cart
-      const { data: createCartData } = await createEmptyCart();
-      cartId = createCartData.createEmptyCart;
-      localStorage.setItem("cartId", cartId || "");
-    }
+    try {
+      setLoading(true);
+      let cartId = localStorage.getItem("cartId");
+      if (!cartId) {
+        // Create an empty cart
+        const { data: createCartData } = await createEmptyCart();
+        cartId = createCartData.createEmptyCart;
+        localStorage.setItem("cartId", cartId || "");
+      }
 
-    // Add product to the cart
-    const cartItems = [{ sku: product.sku, quantity: 1 }];
-    const { data: addProductData } = await addProductToCart({
-      variables: {
-        cartId,
-        cartItems,
-      },
-    });
+      // Add product to the cart
+      const cartItems = [{ sku: product.sku, quantity: 1 }];
+      const { data: addProductData } = await addProductToCart({
+        variables: {
+          cartId,
+          cartItems,
+        },
+        refetchQueries: ["getCart"],
+      });
 
-    // Handle errors
-    if (addProductData.addProductsToCart.user_errors.length > 0) {
-      message.error(
-        addProductData?.addProductsToCart?.user_errors?.[0]?.message
-      );
-    } else {
-      message.success("Đã thêm vào giỏ hàng");
+      // Handle errors
+      if (addProductData.addProductsToCart.user_errors.length > 0) {
+        message.error(
+          addProductData?.addProductsToCart?.user_errors?.[0]?.message
+        );
+      } else {
+        setTotalQuantity(addProductData.addProductsToCart.cart.total_quantity);
+        message.success("Đã thêm vào giỏ hàng");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Button
+      loading={loading}
       onClick={handleAddToCart}
       block
-      className="font-semibold text-sm"
+      className="font-semibold text-sm custom"
       icon={
         <svg
           xmlns="http://www.w3.org/2000/svg"
